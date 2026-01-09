@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Debug - Data Loading Test</title>
+    <style>
+        body { 
+            background: #0f172a; 
+            color: #f1f5f9; 
+            font-family: monospace; 
+            padding: 20px;
+        }
+        .success { color: #10b981; }
+        .error { color: #ef4444; }
+        .info { color: #3b82f6; }
+        pre { background: #1e293b; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Quick Data Loading Test</h1>
+    <div id="output"></div>
+
+    <script>
+        const output = document.getElementById('output');
+        
+        async function test() {
+            output.innerHTML += '<p class="info">📡 Testing API connection...</p>';
+            
+            try {
+                // Test 1: Fetch data
+                output.innerHTML += '<p class="info">Fetching /api/data...</p>';
+                const response = await fetch('/api/data');
+                output.innerHTML += `<p class="info">Status: ${response.status} ${response.statusText}</p>`;
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                output.innerHTML += `<p class="success">✅ SUCCESS! Received ${data.length} records</p>`;
+                output.innerHTML += `<p class="info">First record:</p>`;
+                output.innerHTML += `<pre>${JSON.stringify(data[0], null, 2)}</pre>`;
+                
+                // Test 2: Check data structure
+                if (data.length > 0) {
+                    const keys = Object.keys(data[0]);
+                    output.innerHTML += `<p class="info">Columns (${keys.length}): ${keys.join(', ')}</p>`;
+                }
+                
+                // Test 3: Test reasons API
+                output.innerHTML += '<p class="info">Testing /api/reasons_analysis...</p>';
+                const reasonsResp = await fetch('/api/reasons_analysis');
+                const reasonsData = await reasonsResp.json();
+                output.innerHTML += `<p class="success">✅ Reasons API works!</p>`;
+                output.innerHTML += `<p class="info">Top attending reasons:</p>`;
+                output.innerHTML += `<pre>${JSON.stringify(reasonsData.attending, null, 2).substring(0, 300)}...</pre>`;
+                
+                output.innerHTML += '<p class="success">🎉 ALL TESTS PASSED!</p>';
+                output.innerHTML += '<p class="info">The server is working correctly. If you saw an error before, try clearing your browser cache (Ctrl+Shift+R or Ctrl+F5)</p>';
+                
+            } catch (error) {
+                output.innerHTML += `<p class="error">❌ ERROR: ${error.message}</p>`;
+                output.innerHTML += `<p class="error">Stack: ${error.stack}</p>`;
+            }
+        }
+        
+        // Run test immediately
+        test();
+    </script>
+</body>
+</html>

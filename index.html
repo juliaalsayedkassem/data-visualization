@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Attendance Analysis Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <h1>Attendance Analytics</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            
+            <!-- Summary Cards -->
+            <section class="summary-section">
+                <div class="card summary-card" id="total-students-card">
+                    <div class="card-icon blue">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="total-students">0</h3>
+                        <p>Total Students</p>
+                    </div>
+                </div>
+                
+                <div class="card summary-card" id="majors-card">
+                    <div class="card-icon green">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="total-majors">0</h3>
+                        <p>Majors Analyzed</p>
+                    </div>
+                </div>
+                
+                <div class="card summary-card" id="attendance-card">
+                    <div class="card-icon purple">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="avg-attendance">0%</h3>
+                        <p>High Attendance</p>
+                    </div>
+                </div>
+                
+                <div class="card summary-card" id="performance-card">
+                    <div class="card-icon orange">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="high-performers">0%</h3>
+                        <p>GPA 70+</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Filters -->
+            <section class="filters-section">
+                <div class="card">
+                    <h2><i class="fas fa-filter"></i> Filters</h2>
+                    <div class="filter-controls">
+                        <div class="filter-group">
+                            <label for="major-filter">Major:</label>
+                            <select id="major-filter" class="filter-select">
+                                <option value="all">All Majors</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="year-filter">Year:</label>
+                            <select id="year-filter" class="filter-select">
+                                <option value="all">All Years</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="gpa-filter">GPA Range:</label>
+                            <select id="gpa-filter" class="filter-select">
+                                <option value="all">All GPA Ranges</option>
+                            </select>
+                        </div>
+                        
+                        <button id="reset-filters" class="btn-primary">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-section">
+                
+                <!-- Row 1 -->
+                <div class="chart-row">
+                    <div class="card chart-card">
+                        <h2><i class="fas fa-venus-mars"></i> Gender Distribution</h2>
+                        <canvas id="genderChart"></canvas>
+                    </div>
+                    
+                    <div class="card chart-card">
+                        <h2><i class="fas fa-university"></i> Students by Major</h2>
+                        <canvas id="majorChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="chart-row">
+                    <div class="card chart-card">
+                        <h2><i class="fas fa-chart-bar"></i> GPA Distribution</h2>
+                        <canvas id="gpaChart"></canvas>
+                    </div>
+                    
+                    <div class="card chart-card">
+                        <h2><i class="fas fa-chart-pie"></i> Attendance Behavior Distribution</h2>
+                        <canvas id="attendanceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Row 3 - Full Width -->
+                <div class="card chart-card full-width">
+                    <h2><i class="fas fa-calendar-alt"></i> Attendance Patterns Across Academic Years</h2>
+                    <canvas id="yearWiseChart"></canvas>
+                </div>
+
+                <!-- Row 4 -->
+                <div class="chart-row">
+                    <div class="card chart-card">
+                        <h2><i class="fas fa-check-circle"></i> Top Reasons for Attending</h2>
+                        <canvas id="attendingReasonsChart"></canvas>
+                    </div>
+                    
+                    <div class="card chart-card">
+                        <h2><i class="fas fa-times-circle"></i> Top Reasons for Skipping</h2>
+                        <canvas id="skippingReasonsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Row 5 - Full Width -->
+                <div class="card chart-card full-width">
+                    <h2><i class="fas fa-heart"></i> Attitude Toward Attending Classes</h2>
+                    <canvas id="attitudeChart"></canvas>
+                </div>
+
+                <!-- Row 6 - Full Width -->
+                <div class="card chart-card full-width">
+                    <h2><i class="fas fa-clipboard-list"></i> Ways of Compensation for Missed Content</h2>
+                    <canvas id="compensationChart"></canvas>
+                </div>
+
+                <!-- Row 7 - Full Width -->
+                <div class="card chart-card full-width">
+                    <h2><i class="fas fa-chart-line"></i> Effectiveness of Alternative Methods</h2>
+                    <canvas id="effectivenessChart"></canvas>
+                </div>
+
+                <!-- Row 8 - Full Width -->
+                <div class="card chart-card full-width">
+                    <h2><i class="fas fa-book"></i> Effective Learning Methods</h2>
+                    <canvas id="learningMethodsChart"></canvas>
+                </div>
+
+                <!-- Row 9 - Full Width -->
+                <div class="card chart-card full-width">
+                    <h2><i class="fas fa-clipboard-check"></i> Frequency of Optional Attendance</h2>
+                    <canvas id="optionalFrequencyChart"></canvas>
+                </div>
+
+                <!-- Row 10 - Full Width -->
+                <div class="card chart-card full-width">
+                    <h2><i class="fas fa-users-cog"></i> Factors Influencing Attendance</h2>
+                    <canvas id="factorsChart"></canvas>
+                </div>
+
+                <!-- Row 11 - Full Width -->
+                <div class="card chart-card full-width">
+                    <h2><i class="fas fa-chart-line"></i> Attendance vs GPA Relationship</h2>
+                    <canvas id="attendanceGpaChart"></canvas>
+                </div>
+
+            </section>
+
+            <!-- Insights Section -->
+            <section class="insights-section" id="insights">
+                <div class="card">
+                    <h2><i class="fas fa-lightbulb"></i> Key Insights</h2>
+                    <div id="insights-content" class="insights-grid">
+                        <!-- Insights will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Student Attendance Analytics. Data-driven insights for better education.</p>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Loading data...</p>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

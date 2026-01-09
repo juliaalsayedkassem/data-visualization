@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test Page</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #0f172a;
+            color: #f1f5f9;
+            padding: 20px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            background: #1e293b;
+            border-left: 4px solid #10b981;
+            border-radius: 4px;
+        }
+        .test-result.error {
+            border-left-color: #ef4444;
+        }
+        h1 { color: #6366f1; }
+        h2 { color: #8b5cf6; margin-top: 20px; }
+        pre {
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 API Testing Dashboard</h1>
+    <div id="results"></div>
+
+    <script>
+        const resultsDiv = document.getElementById('results');
+
+        async function testAPI(endpoint, name) {
+            const div = document.createElement('div');
+            div.className = 'test-result';
+            
+            try {
+                const response = await fetch(endpoint);
+                const data = await response.json();
+                
+                div.innerHTML = `
+                    <h2>✅ ${name}</h2>
+                    <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                    <p><strong>Endpoint:</strong> ${endpoint}</p>
+                    <p><strong>Data Preview:</strong></p>
+                    <pre>${JSON.stringify(data, null, 2).substring(0, 500)}...</pre>
+                `;
+            } catch (error) {
+                div.className = 'test-result error';
+                div.innerHTML = `
+                    <h2>❌ ${name}</h2>
+                    <p><strong>Endpoint:</strong> ${endpoint}</p>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `;
+            }
+            
+            resultsDiv.appendChild(div);
+        }
+
+        async function runAllTests() {
+            console.log('Starting API tests...');
+            
+            await testAPI('/api/data', 'Get All Data');
+            await testAPI('/api/summary', 'Get Summary');
+            await testAPI('/api/attendance_by_major', 'Attendance by Major');
+            await testAPI('/api/gpa_by_attendance', 'GPA by Attendance');
+            await testAPI('/api/reasons_analysis', 'Reasons Analysis');
+            await testAPI('/api/year_wise_analysis', 'Year-wise Analysis');
+            
+            console.log('All tests completed!');
+        }
+
+        // Run tests when page loads
+        runAllTests();
+    </script>
+</body>
+</html>
